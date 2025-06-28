@@ -22,6 +22,9 @@ public class EnemyCharacter : Character
         HealthComponent healthComponent = new HealthComponent();
         rigBody = GetComponent<Rigidbody>();
     }
+    void Start(){
+        Initialize();
+    }
 
     protected override void Update()
 

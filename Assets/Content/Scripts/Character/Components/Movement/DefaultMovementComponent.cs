@@ -13,15 +13,20 @@ public class DefaultMovementComponent : IMovementComponent
     private float speed;
     private float turnSmoothVelocity = 0.1f;
     public float jumpPower = 1f;
-    private bool is_grounded;
+    //private bool is_grounded;
+    
     private bool isGrounded;
     [SerializeField]
-    //public Rigidbody rb;
     public LayerMask groundLayer;
-    public Transform groundCheck;
+    [SerializeField]
+    
     public float groundCheckRadius = 0.2f;
     public float jumpForce = 7f;
     public Vector3 jump;
+    public Vector3 velo;
+    
+    public LayerMask groundMask;//
+    
 
     public float Speed { 
         get=>speed;
@@ -31,44 +36,55 @@ public class DefaultMovementComponent : IMovementComponent
         } 
     }
     
+    
     public void Initialize(CharacterData characterData)
     {
         this.characterData = characterData;
         Speed = characterData.DefaultSpeed;
-        //this.rb = characterData.rb;
+        
         jump=new Vector3(0.0f,2.0f,0.0f);
+        groundMask = LayerMask.GetMask("Water");//groundMask = LayerMask.GetMask("Ground");
+        
 
     }
 
     public Vector3 Position =>  characterData.CharacterTransform.position;
-
+    
+    
     public void Move(Vector3 direction)
     {
         
-        //Debug.Log(characterData.CharacterController.isGrounded);
-        float targetAngle=Mathf.Atan2(direction.x,direction.z)*Mathf.Rad2Deg;
-        //isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundLayer);
-        
-        
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        Debug.Log("mover"+move);
-        if (Input.GetButtonDown("Jump") )
-        {
-            Debug.Log("movexxxxxxxxxxxxxxxxxxxxxxxxx");
-            //Debug.Log(characterData.CharacterController.isGrounded);
-            
-
-
-            characterData.rb.linearVelocity = new Vector3(characterData.rb.linearVelocity.x, 0f, characterData.rb.linearVelocity.z); // reset Y//rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); // reset Y
-            characterData.rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);//rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-
-
+        if(characterData.groundCheck==null){
+            Debug.Log("err");
+            return;
         }
-        move = characterData.CharacterTransform.TransformDirection(move);
-        Vector3 forward = characterData.CharacterTransform.TransformDirection(Vector3.forward);
-        characterData.CharacterController.Move(move * Speed * Time.deltaTime);
+
+        isGrounded=Physics.CheckSphere(characterData.groundCheck.position,0.5f,groundMask);
+        characterData.speed=2;
+        
+        if (Input.GetButtonDown("Jump") && isGrounded )
+        {
+    
+            characterData.animator.SetBool("is_moving",true);
+            //characterData.animator.SetTrigger("walk")   ;
+            Debug.Log("jump");
+            velo.y =Mathf.Sqrt(2f*9.81f*1.5f);//to fixed update                   
+            
+        }
+        if(direction.magnitude>0.01){
+            Rotation(direction);
+        }
+        characterData.animator.SetBool("is_moving",true);
+        characterData.animator.SetTrigger("walk")   ;
+        
+        Vector3 move = characterData.CharacterTransform.TransformDirection(direction);
+        float current_speed= move.magnitude*3f;
+        characterData.animator.SetFloat("speed", current_speed);
+        Debug.Log("Speed = " + current_speed);
+        characterData.CharacterController.Move(move *3+velo * Time.deltaTime);
         
     }
+    
 
     public void Rotation(Vector3 direction)
     {

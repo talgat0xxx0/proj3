@@ -20,14 +20,16 @@ public class CharacterData : MonoBehaviour
     public float DefaultSpeed=>defaultspeed;
 
     public Transform CharacterTransform => characterTransform;
-   
-    private Animator animator;
+    [SerializeField]
+    public Animator animator;
     public float speed;
     public int baseHealth;
     public float baseDamage;
     public Animator Animator => animator;
     public Rigidbody rb;
+    
+    
+    [SerializeField]
     public Transform groundCheck;
-    public LayerMask groundLayer;
-    //animator = GetComponent<Animator>();
+    
 }

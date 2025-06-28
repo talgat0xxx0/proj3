@@ -25,7 +25,7 @@ public abstract class Character : MonoBehaviour
         MovementComponent=new DefaultMovementComponent();
         MovementComponent.Initialize(characterData);
         AttackComponent = new AttackComponent();
-        AttackComponent.Initialize(characterData);//Att
+        AttackComponent.Initialize(characterData);
 
     }
     
