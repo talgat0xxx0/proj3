@@ -1,4 +1,12 @@
+!pip install transformers datasets evaluate sacrebleu bert-score sentencepiece
+pip install rouge_score
+!huggingface-cli login --token=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
+pip install sacrebleu
+pip install bert_score
+pip install evaluate
+pip install -U bitsandbytes
 # -*- coding: utf-8 -*-vot67
+
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from datasets import load_from_disk, load_dataset  # <--- Добавил load_dataset
